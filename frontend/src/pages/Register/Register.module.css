@@ -15,4 +15,5 @@
 .header {
   text-align: center;
   margin-bottom: 32px;
+  user-select: none;
 }

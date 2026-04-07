@@ -14,6 +14,72 @@ html, body {
   height: 100%;
 }
 
+/* ==========================================
+   UI 框架层禁止文字选中
+   只对"操作界面"的标题、标签、导航禁用；
+   表单输入 / 预览内容 不在此范围
+   ========================================== */
+
+/* Ant Design 标题组件 */
+.ant-typography h1, .ant-typography h2, .ant-typography h3,
+.ant-typography h4, .ant-typography h5, .ant-typography h6,
+h1.ant-typography, h2.ant-typography, h3.ant-typography,
+h4.ant-typography, h5.ant-typography {
+  user-select: none;
+}
+
+/* Ant Design Layout Header */
+.ant-layout-header {
+  user-select: none;
+}
+
+/* Ant Design Sider */
+.ant-layout-sider {
+  user-select: none;
+}
+
+/* Ant Design Card 头部 */
+.ant-card-head,
+.ant-card-head-title {
+  user-select: none;
+}
+
+/* Ant Design Menu */
+.ant-menu-item,
+.ant-menu-submenu-title {
+  user-select: none;
+}
+
+/* Ant Design Form 标签 */
+.ant-form-item-label > label {
+  user-select: none;
+}
+
+/* Ant Design Tabs */
+.ant-tabs-tab {
+  user-select: none;
+}
+
+/* Ant Design Table 表头 */
+.ant-table-thead th {
+  user-select: none;
+}
+
+/* Ant Design Button 文字 */
+.ant-btn {
+  user-select: none;
+}
+
+/* Ant Design Tag / Badge */
+.ant-tag,
+.ant-badge {
+  user-select: none;
+}
+
+.ant-empty-description {
+  user-select: none;
+}
+
 /* 滚动条美化 */
 ::-webkit-scrollbar {
   width: 6px;

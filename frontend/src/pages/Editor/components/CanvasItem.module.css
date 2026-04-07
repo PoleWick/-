@@ -1,7 +1,7 @@
 .wrapper {
   position: relative;
   cursor: pointer;
-  transition: outline 0.15s;
+  transition: box-shadow 0.15s;
 }
 
 .actionBar {
@@ -42,4 +42,5 @@
   padding: 1px 6px;
   border-radius: 0 0 4px 0;
   pointer-events: none;
+  user-select: none;
 }

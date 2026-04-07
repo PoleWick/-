@@ -13,4 +13,5 @@
   display: block;
   margin-bottom: 12px;
   color: #ff4d4f;
+  user-select: none;
 }

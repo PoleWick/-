@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Layout, Button, Space, Typography, Input, Spin, Tooltip, Modal } from 'antd'
+import { Layout, Button, Space, Typography, Input, Spin, Tooltip, App } from 'antd'
 import useMessage from '@/hooks/useMessage'
 import {
   SaveOutlined, EyeOutlined, ExportOutlined,
@@ -26,6 +26,7 @@ const Editor = () => {
   const [saving, setSaving] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const message = useMessage()
+  const { modal } = App.useApp()
 
   const {
     pageTitle, isDirty, pageId,
@@ -85,23 +86,26 @@ const Editor = () => {
   }
 
   const handleBack = () => {
-    if (isDirty) {
-      Modal.confirm({
-        title: '有未保存的修改',
-        content: '离开后修改将丢失，是否继续？',
-        okText: '离开',
-        okButtonProps: { danger: true },
-        cancelText: '取消',
-        onOk: () => navigate('/dashboard'),
-      })
-    } else {
+    if (!isDirty) {
       navigate('/dashboard')
+      return
     }
+    modal.confirm({
+      title: '有未保存的修改',
+      content: '当前页面有未保存的内容，直接离开将丢失修改。',
+      okText: '直接离开',
+      okButtonProps: { danger: true },
+      cancelText: '继续编辑',
+      onOk: () => navigate('/dashboard'),
+    })
   }
 
   if (loading) return (
     <div className={styles.loadingScreen}>
-      <Spin size="large" tip="加载页面中..." />
+      <Space direction="vertical" align="center" size={12}>
+        <Spin size="large" />
+        <Text type="secondary">加载页面中...</Text>
+      </Space>
     </div>
   )
 
@@ -114,13 +118,15 @@ const Editor = () => {
             <Tooltip title="返回页面管理">
               <Button icon={<ArrowLeftOutlined />} type="text" onClick={handleBack} />
             </Tooltip>
-            <Input
-              value={pageTitle}
-              onChange={(e) => setPageTitle(e.target.value)}
-              className={styles.titleInput}
-              variant="borderless"
-              placeholder="未命名页面"
-            />
+            <Tooltip title="点击修改页面名称" placement="bottom" mouseEnterDelay={0.8}>
+              <Input
+                value={pageTitle}
+                onChange={(e) => setPageTitle(e.target.value)}
+                className={styles.titleInput}
+                variant="borderless"
+                placeholder="未命名页面"
+              />
+            </Tooltip>
             {isDirty && (
               <Text type="secondary" className={styles.unsavedHint}>● 未保存</Text>
             )}
