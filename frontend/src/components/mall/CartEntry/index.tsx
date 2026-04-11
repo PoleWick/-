@@ -24,7 +24,7 @@ const CartEntry = ({
   const totalPrice = items.reduce((s, i) => s + (Number(i.price) || 0) * (i.quantity || 0), 0)
 
   const handleCheckout = () => {
-    if (checkoutUrl) window.open(checkoutUrl, '_blank')
+    if (checkoutUrl) window.location.href = checkoutUrl
   }
 
   return (
@@ -147,10 +147,9 @@ export const cartEntrySchema: ISchema = {
   properties: {
     checkoutUrl: {
       type: 'string',
-      title: '\u7ed3\u7b97\u8df3\u8f6c\u94fe\u63a5',
+      title: '\u7ed3\u7b97\u8df3\u8f6c\u9875\u9762',
       'x-decorator': 'FormItem',
-      'x-component': 'Input',
-      'x-component-props': { placeholder: 'https://...' },
+      'x-component': 'PagePicker',
     },
     buttonColor: {
       type: 'string',

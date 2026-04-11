@@ -2,20 +2,26 @@ import * as projectModel from '../models/projectModel.js'
 import * as pageModel    from '../models/pageModel.js'
 import { success, error } from '../utils/response.js'
 
-/** 三个默认页面的初始配置 */
-const makeDefaultConfig = (title) => ({
+/** 公共 NavBar 预置项（pageId 在创建后回填） */
+const makeNavBar = (mallId, ordersId) => ({
+  id: 'tpl-navbar',
+  type: 'NavBar',
+  order: 999,
+  props: {
+    activeColor: '#ff4d4f',
+    items: [
+      { icon: '\uD83C\uDFEA', label: '\u70B9\u9910',  pageId: mallId },
+      { icon: '\uD83D\uDCCB', label: '\u8BA2\u5355',  pageId: ordersId },
+    ],
+  },
+})
+
+/** 页面基础配置 */
+const baseConfig = (title) => ({
   pageSettings: { backgroundColor: '#f5f5f5', title, maxWidth: 375 },
   components: [],
 })
 
-/** 默认 NavBar 配置（pageType 引用，preview 运行时解析为实际 pageId） */
-const DEFAULT_NAVBAR = {
-  activeColor: '#ff4d4f',
-  items: [
-    { icon: '\uD83D\uDED2', label: '\u70B9\u9910', pageType: 'mall' },
-    { icon: '\uD83D\uDCCB', label: '\u8BA2\u5355', pageType: 'orders' },
-  ],
-}
 
 // GET /api/projects
 export const getList = async (req, res, next) => {
@@ -35,30 +41,76 @@ export const getDetail = async (req, res, next) => {
   } catch (err) { next(err) }
 }
 
-// POST /api/projects  创建项目，自动生成三个默认页面
+// POST /api/projects  创建项目，自动生成三个默认页面并预置组件
 export const create = async (req, res, next) => {
   try {
     const { name = '\u6211\u7684\u5546\u57CE', description } = req.body
-    const projectId = await projectModel.create({ userId: req.user.id, name, description })
+    const userId    = req.user.id
+    const projectId = await projectModel.create({ userId, name, description })
 
-    const defaults = [
-      { title: '\u5546\u54C1\u9875', pageType: 'mall',     config: makeDefaultConfig('\u5546\u54C1\u9875') },
-      { title: '\u652F\u4ED8\u9875', pageType: 'checkout', config: makeDefaultConfig('\u652F\u4ED8\u9875') },
-      { title: '\u8BA2\u5355\u9875', pageType: 'orders',   config: makeDefaultConfig('\u8BA2\u5355\u9875') },
-    ]
-    for (const d of defaults) {
-      await pageModel.create({
-        userId: req.user.id, projectId,
-        title: d.title, config: d.config,
-        pageType: d.pageType, isDefault: 1,
-      })
+    // 第一步：创建三个空页面，拿到真实 pageId
+    const mallId = await pageModel.create({
+      userId, projectId, title: '\u5546\u54C1\u9875',
+      config: baseConfig('\u5546\u54C1\u9875'), pageType: 'mall', isDefault: 1,
+    })
+    const checkoutId = await pageModel.create({
+      userId, projectId, title: '\u652F\u4ED8\u9875',
+      config: baseConfig('\u652F\u4ED8\u9875'), pageType: 'checkout', isDefault: 1,
+    })
+    const ordersId = await pageModel.create({
+      userId, projectId, title: '\u8BA2\u5355\u9875',
+      config: baseConfig('\u8BA2\u5355\u9875'), pageType: 'orders', isDefault: 1,
+    })
+
+    // 第二步：用真实 pageId 构建完整组件配置
+    const navbar = makeNavBar(mallId, ordersId)
+
+    const mallConfig = {
+      pageSettings: { backgroundColor: '#f5f5f5', title: '\u5546\u54C1\u9875', maxWidth: 375 },
+      components: [
+        { id: 'tpl-searchbar',   type: 'SearchBar',   order: 0,
+          props: { placeholder: '\u641C\u7D22\u5546\u54C1', backgroundColor: '#f5f5f5', borderRadius: 20, showSearchIcon: true } },
+        { id: 'tpl-banner',      type: 'Banner',      order: 1,
+          props: { images: [], height: 200, autoplay: true, borderRadius: 0 } },
+        { id: 'tpl-productlist', type: 'ProductList', order: 2,
+          props: { title: '\u70ED\u9500\u5546\u54C1', columns: 2, products: [
+            { name: '\u793A\u4F8B\u5546\u54C1 A', price: 12.9, originalPrice: 15.0, image: '', badge: '\u65B0\u54C1' },
+            { name: '\u793A\u4F8B\u5546\u54C1 B', price: 8.9,  originalPrice: 10.0, image: '', badge: '\u70ED\u9500' },
+            { name: '\u793A\u4F8B\u5546\u54C1 C', price: 19.9, image: '' },
+          ]} },
+        { id: 'tpl-cartentry',   type: 'CartEntry',   order: 3,
+          props: { checkoutUrl: `/preview/${checkoutId}`, buttonColor: '#ff4d4f' } },
+        navbar,
+      ],
     }
 
-    // 写入默认 NavBar（含 pageType 引用，preview 动态解析）
-    await projectModel.update(projectId, req.user.id, { navbarConfig: DEFAULT_NAVBAR })
+    const checkoutConfig = {
+      pageSettings: { backgroundColor: '#f5f5f5', title: '\u652F\u4ED8\u9875', maxWidth: 375 },
+      components: [
+        { id: 'tpl-topbar',      type: 'TopBar',      order: 0,
+          props: { title: '\u786E\u8BA4\u8BA2\u5355', backUrl: `/preview/${mallId}`,
+            backgroundColor: '#ffffff', textColor: '#333333' } },
+        { id: 'tpl-orderconfirm', type: 'OrderConfirm', order: 1,
+          props: { title: '\u786E\u8BA4\u8BA2\u5355', buttonColor: '#ff4d4f', buttonText: '\u63D0\u4EA4\u8BA2\u5355' } },
+      ],
+    }
 
-    const project = await projectModel.findById(projectId, req.user.id)
-    const pages   = await pageModel.findByProjectId(projectId, req.user.id)
+    const ordersConfig = {
+      pageSettings: { backgroundColor: '#f5f5f5', title: '\u8BA2\u5355\u9875', maxWidth: 375 },
+      components: [
+        { id: 'tpl-orders-list', type: 'OrderList', order: 0,
+          props: { title: '\u6211\u7684\u8BA2\u5355', emptyText: '\u6682\u65E0\u8BA2\u5355\u8BB0\u5F55' } },
+        navbar,
+      ],
+    }
+
+    // 第三步：回写完整配置
+    await pageModel.update(mallId,     userId, { config: mallConfig })
+    await pageModel.update(checkoutId, userId, { config: checkoutConfig })
+    await pageModel.update(ordersId,   userId, { config: ordersConfig })
+
+    const project = await projectModel.findById(projectId, userId)
+    const pages   = await pageModel.findByProjectId(projectId, userId)
     success(res, { ...project, pages }, '\u9879\u76EE\u521B\u5EFA\u6210\u529F')
   } catch (err) { next(err) }
 }
@@ -86,19 +138,27 @@ export const remove = async (req, res, next) => {
   } catch (err) { next(err) }
 }
 
-// POST /api/projects/:id/pages  在项目内新建页面（自动含 NavBar）
+// POST /api/projects/:id/pages  在项目内新建自定义页面（自动预置 NavBar）
 export const createPage = async (req, res, next) => {
   try {
     const projectId = Number(req.params.id)
-    const project   = await projectModel.findById(projectId, req.user.id)
+    const userId    = req.user.id
+    const project   = await projectModel.findById(projectId, userId)
     if (!project) return error(res, '\u9879\u76EE\u4E0D\u5B58\u5728\u6216\u65E0\u6743\u9650', 404)
 
+    // 找到本项目的 mall / orders 页，以便预置 NavBar
+    const siblings  = await pageModel.findByProjectId(projectId, userId)
+    const mallId    = siblings.find(p => p.page_type === 'mall')?.id    ?? null
+    const ordersId  = siblings.find(p => p.page_type === 'orders')?.id  ?? null
+
     const { title = '\u672A\u547D\u540D\u9875\u9762' } = req.body
+    const config = {
+      pageSettings: { backgroundColor: '#f5f5f5', title, maxWidth: 375 },
+      components: mallId && ordersId ? [makeNavBar(mallId, ordersId)] : [],
+    }
+
     const pageId = await pageModel.create({
-      userId: req.user.id, projectId,
-      title,
-      config: makeDefaultConfig(title),
-      pageType: 'custom', isDefault: 0,
+      userId, projectId, title, config, pageType: 'custom', isDefault: 0,
     })
     const page = await pageModel.findById(pageId)
     success(res, page, '\u9875\u9762\u521B\u5EFA\u6210\u529F')

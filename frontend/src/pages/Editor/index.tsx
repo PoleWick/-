@@ -30,7 +30,7 @@ const Editor = () => {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [exportOpen, setExportOpen] = useState(false)
+  const [exportOpen,   setExportOpen]   = useState(false)
   const [projectId,   setProjectId]   = useState<number | null>(null)
   const [projectName, setProjectName] = useState<string>('')
 
@@ -175,7 +175,7 @@ const Editor = () => {
             )}
           </div>
           <Space>
-            <Tooltip title="页面全局设置">
+            <Tooltip title={'\u9875\u9762\u5168\u5C40\u8BBE\u7F6E'}>
               <Button icon={<SettingOutlined />} onClick={() => setSettingsOpen(true)} />
             </Tooltip>
             <Button
@@ -227,6 +227,7 @@ const Editor = () => {
           onClose={() => setExportOpen(false)}
         />
       )}
+
     </DndProvider>
   )
 }

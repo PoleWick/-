@@ -6,12 +6,14 @@ import Banner, { bannerSchema, bannerDefaultProps } from '@/components/mall/Bann
 import ProductList, { productListSchema, productListDefaultProps } from '@/components/mall/ProductList'
 import CategoryNav, { categoryNavSchema, categoryNavDefaultProps } from '@/components/mall/CategoryNav'
 import CartEntry, { cartEntrySchema, cartEntryDefaultProps } from '@/components/mall/CartEntry'
-import NavBar, { navBarSchema, navBarDefaultProps } from '@/components/mall/NavBar'
 import OrderConfirm, { orderConfirmSchema, orderConfirmDefaultProps } from '@/components/mall/OrderConfirm'
+import NavBar, { navBarSchema, navBarDefaultProps } from '@/components/mall/NavBar'
+import TopBar, { topBarSchema, topBarDefaultProps } from '@/components/mall/TopBar'
 import SearchBar, { searchBarSchema, searchBarDefaultProps } from '@/components/mall/SearchBar'
 import Divider, { dividerSchema, dividerDefaultProps } from '@/components/mall/Divider'
 import RichText, { richTextSchema, richTextDefaultProps } from '@/components/mall/RichText'
 import ImageBlock, { imageBlockSchema, imageBlockDefaultProps } from '@/components/mall/ImageBlock'
+import OrderList, { orderListSchema, orderListDefaultProps } from '@/components/mall/OrderList'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>
@@ -53,13 +55,6 @@ export const COMPONENT_REGISTRY: Record<ComponentType, ComponentConfig> = {
     schema: cartEntrySchema,
     defaultProps: cartEntryDefaultProps,
   },
-  NavBar: {
-    label: '底部导航栏',
-    icon: 'AppstoreOutlined',
-    component: NavBar as FC<AnyProps>,
-    schema: navBarSchema,
-    defaultProps: navBarDefaultProps,
-  },
   OrderConfirm: {
     label: '订单确认',
     icon: 'CheckCircleOutlined',
@@ -89,11 +84,32 @@ export const COMPONENT_REGISTRY: Record<ComponentType, ComponentConfig> = {
     defaultProps: richTextDefaultProps,
   },
   ImageBlock: {
-    label: '图片块',
+    label: '\u56FE\u7247\u5757',
     icon: 'FileImageOutlined',
     component: ImageBlock as FC<AnyProps>,
     schema: imageBlockSchema,
     defaultProps: imageBlockDefaultProps,
+  },
+  NavBar: {
+    label: '\u5E95\u90E8\u5BFC\u822A\u680F',
+    icon: 'MenuOutlined',
+    component: NavBar as FC<AnyProps>,
+    schema: navBarSchema,
+    defaultProps: navBarDefaultProps,
+  },
+  TopBar: {
+    label: '\u9876\u90E8\u8FD4\u56DE\u680F',
+    icon: 'ArrowLeftOutlined',
+    component: TopBar as FC<AnyProps>,
+    schema: topBarSchema,
+    defaultProps: topBarDefaultProps,
+  },
+  OrderList: {
+    label: '\u8BA2\u5355\u5217\u8868',
+    icon: 'UnorderedListOutlined',
+    component: OrderList as FC<AnyProps>,
+    schema: orderListSchema,
+    defaultProps: orderListDefaultProps,
   },
 }
 

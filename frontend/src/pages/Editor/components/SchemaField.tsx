@@ -8,6 +8,7 @@ import {
   ArrayItems,
 } from '@formily/antd-v5'
 import { ImageUploader } from './ImageUploader'
+import PagePicker from './PagePicker'
 
 export const SchemaField = createSchemaField({
   components: {
@@ -24,5 +25,6 @@ export const SchemaField = createSchemaField({
     'ArrayItems.MoveUp': ArrayItems.MoveUp,
     'ArrayItems.MoveDown': ArrayItems.MoveDown,
     ImageUploader,
+    PagePicker,
   },
 })

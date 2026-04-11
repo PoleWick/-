@@ -36,6 +36,27 @@ export const createOrder = async (req, res, next) => {
   }
 }
 
+/** GET /api/orders?pageId=xxx  查询页面订单列表 */
+export const getOrders = async (req, res, next) => {
+  try {
+    const { pageId } = req.query
+    if (!pageId) return error(res, 'pageId 不能为空', 400)
+
+    const [rows] = await pool.execute(
+      `SELECT id, pickup_number, total_price, payment_status, created_at, items
+       FROM orders WHERE page_id = ? ORDER BY created_at DESC LIMIT 50`,
+      [Number(pageId)]
+    )
+    const orders = rows.map(o => ({
+      ...o,
+      items: JSON.parse(o.items || '[]'),
+    }))
+    success(res, orders)
+  } catch (err) {
+    next(err)
+  }
+}
+
 /** GET /api/orders/:id  查询订单详情 */
 export const getOrder = async (req, res, next) => {
   try {

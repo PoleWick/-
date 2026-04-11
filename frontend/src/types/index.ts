@@ -13,12 +13,14 @@ export type ComponentType =
   | 'ProductList'
   | 'CategoryNav'
   | 'CartEntry'
-  | 'NavBar'
   | 'OrderConfirm'
   | 'SearchBar'
   | 'Divider'
   | 'RichText'
   | 'ImageBlock'
+  | 'NavBar'
+  | 'TopBar'
+  | 'OrderList'
 
 export interface MallComponent {
   id: string
