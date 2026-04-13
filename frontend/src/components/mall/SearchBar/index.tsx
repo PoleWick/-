@@ -1,31 +1,67 @@
+import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { SearchOutlined } from '@ant-design/icons'
 import type { ISchema } from '@formily/json-schema'
 import styles from './SearchBar.module.css'
 
 interface SearchBarProps {
-  placeholder?: string
+  placeholder?:     string
   backgroundColor?: string
-  borderRadius?: number
-  showSearchIcon?: boolean
+  borderRadius?:    number
+  __editorMode?:    boolean
 }
 
 const SearchBar = ({
-  placeholder = '搜索商品',
+  placeholder     = '搜索商品',
   backgroundColor = '#f5f5f5',
-  borderRadius = 20,
-  showSearchIcon = true,
-}: SearchBarProps) => (
-  <div className={styles.outer}>
-    <div className={styles.inner} style={{ background: backgroundColor, borderRadius, padding: '8px 14px' }}>
-      {showSearchIcon && (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bbb" strokeWidth="2">
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" />
-        </svg>
-      )}
-      <span className={styles.text}>{placeholder}</span>
+  borderRadius    = 20,
+  __editorMode    = false,
+}: SearchBarProps) => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [value, setValue] = useState(searchParams.get('q') || '')
+
+  const commit = (v: string) => {
+    const next = new URLSearchParams(searchParams)
+    if (v.trim()) next.set('q', v.trim())
+    else next.delete('q')
+    setSearchParams(next, { replace: true })
+  }
+
+  if (__editorMode) {
+    return (
+      <div className={styles.outer}>
+        <div className={styles.inner} style={{ background: backgroundColor, borderRadius, padding: '8px 14px' }}>
+          <SearchOutlined style={{ color: '#bbb', fontSize: 16 }} />
+          <span className={styles.text}>{placeholder}</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.outer}>
+      <div className={styles.inner} style={{ background: backgroundColor, borderRadius, padding: '4px 14px' }}>
+        <SearchOutlined style={{ color: '#bbb', fontSize: 16, flexShrink: 0 }} />
+        <input
+          className={styles.input}
+          value={value}
+          placeholder={placeholder}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && commit(value)}
+        />
+        {value && (
+          <button
+            className={styles.clear}
+            onClick={() => { setValue(''); commit('') }}
+            aria-label="清空"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export const searchBarSchema: ISchema = {
   type: 'object',
@@ -43,18 +79,13 @@ export const searchBarSchema: ISchema = {
       'x-decorator': 'FormItem', 'x-component': 'NumberPicker',
       'x-component-props': { min: 0, max: 30 },
     },
-    showSearchIcon: {
-      type: 'boolean', title: '显示搜索图标',
-      'x-decorator': 'FormItem', 'x-component': 'Switch',
-    },
   },
 }
 
 export const searchBarDefaultProps: SearchBarProps = {
-  placeholder: '搜索商品',
+  placeholder:     '搜索商品',
   backgroundColor: '#f5f5f5',
-  borderRadius: 20,
-  showSearchIcon: true,
+  borderRadius:    20,
 }
 
 export default SearchBar

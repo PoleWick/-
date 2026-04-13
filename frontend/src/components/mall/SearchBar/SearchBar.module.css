@@ -13,3 +13,33 @@
   color: #bbb;
   font-size: 14px;
 }
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+  min-width: 0;
+  line-height: 1.6;
+}
+
+.input::placeholder {
+  color: #bbb;
+}
+
+.clear {
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.clear:hover {
+  color: #999;
+}

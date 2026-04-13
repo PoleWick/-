@@ -76,18 +76,61 @@
   opacity: 0.8;
 }
 
-/* ===== 抽屉 ===== */
+/* ===== 自定义底部浮层 ===== */
+
+/* 遮罩：position fixed 被 #preview-container 的 transform 约束 */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.maskVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 面板：从底部滑入 */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 201;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+}
+
+.sheetOpen {
+  transform: translateY(0);
+}
+
 .drawerHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 16px;
   font-weight: 600;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .clearBtn {
   color: #aaa !important;
   font-size: 13px;
+}
+
+.sheetBody {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-bottom: 16px;
 }
 
 .emptyCart {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Drawer, Button, Badge } from 'antd'
+import { Button, Badge } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import type { ISchema } from '@formily/json-schema'
 import useCartStore from '@/stores/useCartStore'
@@ -62,82 +62,73 @@ const CartEntry = ({
         </button>
       </div>
 
-      {/* ===== 购物车抽屉 ===== */}
-      <Drawer
-        title={
-          <div className={styles.drawerHeader}>
-            <span>{'已选商品'}</span>
-            {items.length > 0 && (
-              <Button
-                type="text"
-                size="small"
-                icon={<DeleteOutlined />}
-                onClick={clear}
-                className={styles.clearBtn}
-              >
-                {'清空'}
-              </Button>
-            )}
-          </div>
-        }
-        placement="bottom"
-        height="auto"
-        styles={{ body: { padding: '0 0 16px', maxHeight: '60vh', overflowY: 'auto' } }}
-        open={open}
-        onClose={() => setOpen(false)}
-        closeIcon={null}
-        style={{ borderRadius: '16px 16px 0 0', overflow: 'hidden' }}
-      >
-        {items.length === 0 ? (
-          <div className={styles.emptyCart}>{'购物车还没有商品哦~'}</div>
-        ) : (
-          <div className={styles.itemList}>
-            {items.map((item) => (
-              <div key={item.key} className={styles.itemRow}>
-                {/* 商品图片 */}
-                <div className={styles.itemImg}>
-                  {item.image
-                    ? <img src={item.image} alt={item.name} className={styles.itemImgEl} />
-                    : <div className={styles.itemImgPlaceholder} />
-                  }
-                </div>
-
-                {/* 商品信息 */}
-                <div className={styles.itemInfo}>
-                  <div className={styles.itemName}>{item.name}</div>
-                  <div className={styles.itemPriceRow}>
-                    <span className={styles.itemPrice}>&yen;{(Number(item.price) || 0).toFixed(1)}</span>
-                    {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
-                      <span className={styles.itemOriginalPrice}>
-                        &yen;{Number(item.originalPrice).toFixed(1)}
-                      </span>
-                    )}
+      {/* ===== 自定义底部浮层（替代 Drawer，避免 scroll-lock 抖动） ===== */}
+      {/* 遮罩 */}
+      <div
+        className={`${styles.mask} ${open ? styles.maskVisible : ''}`}
+        onClick={() => setOpen(false)}
+      />
+      {/* 面板 */}
+      <div className={`${styles.sheet} ${open ? styles.sheetOpen : ''}`}>
+        {/* 面板头部 */}
+        <div className={styles.drawerHeader}>
+          <span>{'已选商品'}</span>
+          {items.length > 0 && (
+            <Button
+              type="text"
+              size="small"
+              icon={<DeleteOutlined />}
+              onClick={clear}
+              className={styles.clearBtn}
+            >
+              {'清空'}
+            </Button>
+          )}
+        </div>
+        {/* 面板内容 */}
+        <div className={styles.sheetBody}>
+          {items.length === 0 ? (
+            <div className={styles.emptyCart}>{'购物车还没有商品哦~'}</div>
+          ) : (
+            <div className={styles.itemList}>
+              {items.map((item) => (
+                <div key={item.key} className={styles.itemRow}>
+                  <div className={styles.itemImg}>
+                    {item.image
+                      ? <img src={item.image} alt={item.name} className={styles.itemImgEl} />
+                      : <div className={styles.itemImgPlaceholder} />
+                    }
+                  </div>
+                  <div className={styles.itemInfo}>
+                    <div className={styles.itemName}>{item.name}</div>
+                    <div className={styles.itemPriceRow}>
+                      <span className={styles.itemPrice}>&yen;{(Number(item.price) || 0).toFixed(1)}</span>
+                      {item.originalPrice && Number(item.originalPrice) > Number(item.price) && (
+                        <span className={styles.itemOriginalPrice}>
+                          &yen;{Number(item.originalPrice).toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.itemQty}>
+                    <button className={styles.qtyCircle} onClick={() => decrease(item.key)} aria-label="减少">
+                      &minus;
+                    </button>
+                    <span className={styles.qtyNum}>{item.quantity}</span>
+                    <button
+                      className={`${styles.qtyCircle} ${styles.qtyCircleAdd}`}
+                      onClick={() => add({ name: item.name, price: item.price, originalPrice: item.originalPrice, image: item.image })}
+                      aria-label="增加"
+                    >
+                      &#43;
+                    </button>
                   </div>
                 </div>
-
-                {/* 数量控件 */}
-                <div className={styles.itemQty}>
-                  <button
-                    className={styles.qtyCircle}
-                    onClick={() => decrease(item.key)}
-                    aria-label="\u51cf\u5c11"
-                  >
-                    &minus;
-                  </button>
-                  <span className={styles.qtyNum}>{item.quantity}</span>
-                  <button
-                    className={`${styles.qtyCircle} ${styles.qtyCircleAdd}`}
-                    onClick={() => add({ name: item.name, price: item.price, originalPrice: item.originalPrice, image: item.image })}
-                    aria-label="\u589e\u52a0"
-                  >
-                    &#43;
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Drawer>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </>
   )
 }

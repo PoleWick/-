@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { ISchema } from '@formily/json-schema'
 import useCartStore, { makeCartKey } from '@/stores/useCartStore'
 import styles from './ProductList.module.css'
@@ -30,6 +32,14 @@ const ProductList = ({ title = '\u70ed\u9500\u5546\u54c1', columns = 2, products
   const safeColumns  = Math.min(Math.max(columns ?? 2, 1), MAX_COLUMNS)
   const cardWidth    = `calc(${100 / safeColumns}% - ${8 * (safeColumns - 1) / safeColumns + 1}px)`
 
+  // 搜索过滤
+  const [searchParams] = useSearchParams()
+  const q = searchParams.get('q') || ''
+  const displayProducts = useMemo(() =>
+    q ? safeProducts.filter(p => p.name.toLowerCase().includes(q.toLowerCase())) : safeProducts,
+    [safeProducts, q],
+  )
+
   // 购物车 store
   const { items, add, decrease } = useCartStore()
   const getQty = (p: Product) =>
@@ -45,8 +55,11 @@ const ProductList = ({ title = '\u70ed\u9500\u5546\u54c1', columns = 2, products
   return (
     <div className={styles.wrapper}>
       {title && <div className={styles.title}>{title}</div>}
+      {q && displayProducts.length === 0 && (
+        <div className={styles.empty}>未找到与「{q}」相关的商品</div>
+      )}
       <div className={styles.grid}>
-        {safeProducts.map((p, i) => (
+        {displayProducts.map((p, i) => (
           <div key={i} className={styles.card} style={{ width: cardWidth, minWidth: cardWidth }}>
 
             {/* 商品图片区 */}

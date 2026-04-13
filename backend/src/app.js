@@ -1,3 +1,4 @@
+import os from 'os'
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -30,11 +31,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = process.env.PORT || 3001
 
+/** 判断是否为私有网段（局域网手机扫码时自动放行） */
+const isPrivateOrigin = (origin) => {
+  if (!origin) return true
+  return /^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|192\.168\.\d+\.\d+)(:\d+)?$/.test(origin)
+}
+
 // 中间件
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',').map(o => o.trim())
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+    if (isPrivateOrigin(origin) || allowedOrigins.includes(origin)) return cb(null, true)
     cb(new Error('Not allowed by CORS'))
   },
   credentials: true,

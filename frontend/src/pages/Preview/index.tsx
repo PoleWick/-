@@ -35,9 +35,19 @@ const Preview = () => {
   const { pageSettings, components } = page.config
   const sorted = [...components].sort((a, b) => a.order - b.order)
 
+  const previewUrl = window.location.href
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(previewUrl)}`
+
   return (
     <div className={styles.outer} style={{ backgroundColor: pageSettings.backgroundColor || '#f5f5f5' }}>
-      <div className={styles.inner} style={{ maxWidth: pageSettings.maxWidth || 375 }}>
+      {/* 左侧二维码卡片（仅桌面端显示） */}
+      <div className={styles.qrCard}>
+        <img src={qrSrc} alt="预览二维码" className={styles.qrImg} />
+        <p className={styles.qrTip}>手机扫码预览</p>
+        <p className={styles.qrSub}>请确保手机与电脑在同一 Wi-Fi 下</p>
+      </div>
+
+      <div id="preview-container" className={styles.inner} style={{ maxWidth: pageSettings.maxWidth || 375 }}>
         <div className={styles.innerContent}>
           {sorted.map((comp) => {
             const registry = COMPONENT_REGISTRY[comp.type as ComponentType]

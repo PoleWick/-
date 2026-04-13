@@ -76,10 +76,10 @@ const NavBar = ({
     window.location.href = `/preview/${item.pageId}`
   }
 
-  return (
+  const navBar = (
     <nav
       className={styles.bar}
-      style={__editorMode ? { position: 'relative', zIndex: 1 } : undefined}
+      style={__editorMode ? { position: 'relative', zIndex: 1 } : { position: 'fixed', bottom: 0, left: 0, right: 0 }}
     >
       {safeItems.map((item, i) => {
         const isActive = item.pageId != null && item.pageId === activePageId
@@ -108,6 +108,16 @@ const NavBar = ({
         )
       })}
     </nav>
+  )
+
+  if (__editorMode) return navBar
+
+  return (
+    <>
+      {/* 占位，防止页面内容被固定导航栏遮住（56 + 安全区） */}
+      <div style={{ height: 'calc(56px + env(safe-area-inset-bottom, 0px))' }} aria-hidden />
+      {navBar}
+    </>
   )
 }
 

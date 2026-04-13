@@ -5,21 +5,74 @@
   height: 100vh;
 }
 
+/* 左侧二维码悬浮卡片 */
+.qrCard {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.10);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+.qrImg {
+  width: 140px;
+  height: 140px;
+  display: block;
+  border-radius: 4px;
+}
+
+.qrTip {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+}
+
+.qrSub {
+  margin: 0;
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* 屏幕太窄时隐藏（手机直接访问时不显示） */
+@media (max-width: 680px) {
+  .qrCard { display: none; }
+}
+
 .outer {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
+  background: #f0f0f0; /* 手机框外的灰色背景 */
 }
 
 .inner {
   width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
   overflow-x: hidden;
   background: #fff;
+  /* transform 使 position:fixed 的子元素相对本容器定位，而非视口 */
+  transform: translateZ(0);
+  /* 隐藏滚动条：保留滚动能力但不占宽度，防止出现/消失时导致布局抖动 */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge Legacy */
+}
+
+.inner::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / 新版 Edge */
 }
 
 .innerContent {
-  flex: 1;
+  min-height: 100%;
 }
