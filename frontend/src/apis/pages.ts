@@ -23,4 +23,7 @@ export const pagesApi = {
 
   export: (id: number) =>
     request.get<never, PageConfig>(`/pages/${id}/export`),
+
+  publish: (id: number) =>
+    request.patch<never, Page>(`/pages/${id}/publish`),
 }

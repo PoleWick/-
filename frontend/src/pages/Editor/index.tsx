@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Layout, Button, Space, Typography, Input, Spin, Tooltip, App, Breadcrumb } from 'antd'
 import useMessage from '@/hooks/useMessage'
 import {
-  SaveOutlined, EyeOutlined, ExportOutlined,
+  SaveOutlined, EyeOutlined, RocketOutlined,
   ArrowLeftOutlined, SettingOutlined,
 } from '@ant-design/icons'
 import { DndProvider } from 'react-dnd'
@@ -14,7 +14,7 @@ import ComponentPanel from './components/ComponentPanel'
 import EditorCanvas from './components/EditorCanvas'
 import PropsPanel from './components/PropsPanel'
 import PageSettingsPanel from './components/PageSettingsPanel'
-import ExportModal from './components/ExportModal'
+import PublishModal from './components/PublishModal'
 import styles from './Editor.module.css'
 
 const { Header, Sider, Content } = Layout
@@ -29,10 +29,11 @@ const Editor = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [exportOpen,   setExportOpen]   = useState(false)
-  const [projectId,   setProjectId]   = useState<number | null>(null)
-  const [projectName, setProjectName] = useState<string>('')
+  const [settingsOpen,  setSettingsOpen]  = useState(false)
+  const [publishOpen,   setPublishOpen]   = useState(false)
+  const [isPublished,   setIsPublished]   = useState(false)
+  const [projectId,     setProjectId]     = useState<number | null>(null)
+  const [projectName,   setProjectName]   = useState<string>('')
 
   // 右侧面板宽度（持久化到 localStorage）
   const [rightWidth, setRightWidth] = useState(
@@ -75,6 +76,7 @@ const Editor = () => {
         loadConfig(data.config, data.id, data.title)
         setProjectId(data.project_id)
         setProjectName(data.project?.name ?? '')
+        setIsPublished(!!data.is_published)
       })
       .catch(() => { message.error('\u52A0\u8F7D\u9875\u9762\u5931\u8D25'); navigate('/dashboard') })
       .finally(() => setLoading(false))
@@ -104,18 +106,18 @@ const Editor = () => {
     }
   }
 
-  const handleExport = () => {
+  const handlePublish = () => {
     if (!pageId) {
       modal.confirm({
         title: '请先保存页面',
-        content: '需要保存页面后才能生成分享链接，是否立即保存？',
+        content: '需要保存页面后才能发布，是否立即保存？',
         okText: '立即保存',
         cancelText: '取消',
         onOk: handleSave,
       })
       return
     }
-    setExportOpen(true)
+    setPublishOpen(true)
   }
 
   const backTarget = projectId ? `/projects/${projectId}` : '/dashboard'
@@ -185,7 +187,9 @@ const Editor = () => {
             >
               预览
             </Button>
-            <Button icon={<ExportOutlined />} onClick={handleExport}>导出</Button>
+            <Button icon={<RocketOutlined />} onClick={handlePublish} type={isPublished ? 'default' : 'primary'}>
+              {isPublished ? '已发布' : '发布'}
+            </Button>
             <Button type="primary" icon={<SaveOutlined />} loading={saving} onClick={handleSave}>
               保存
             </Button>
@@ -218,13 +222,15 @@ const Editor = () => {
       {/* 页面全局设置弹窗 */}
       <PageSettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-      {/* 导出/分享弹窗 */}
+      {/* 发布弹窗 */}
       {pageId && (
-        <ExportModal
-          open={exportOpen}
+        <PublishModal
+          open={publishOpen}
           pageId={pageId}
           pageTitle={pageTitle}
-          onClose={() => setExportOpen(false)}
+          isPublished={isPublished}
+          onClose={() => setPublishOpen(false)}
+          onPublished={() => setIsPublished(true)}
         />
       )}
 

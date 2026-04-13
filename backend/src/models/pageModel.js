@@ -59,6 +59,16 @@ export const remove = async (id, userId) => {
   return result.affectedRows
 }
 
+/** 发布页面 */
+export const publish = async (id, userId) => {
+  const [result] = await pool.query(
+    `UPDATE pages SET is_published = 1, published_at = NOW()
+     WHERE id = ? AND user_id = ?`,
+    [id, userId]
+  )
+  return result.affectedRows
+}
+
 /** 复制页面（复制为 custom 类型，非锁定） */
 export const duplicate = async (id, userId, projectId) => {
   const page = await findById(id, userId)

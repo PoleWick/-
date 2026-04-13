@@ -12,7 +12,8 @@ router.use(auth)
 router.get('/',               pageController.getList)
 router.put('/:id',            pageController.update)
 router.delete('/:id',         pageController.remove)
-router.post('/:id/duplicate', pageController.duplicate)
-router.get('/:id/export',     pageController.exportPage)
+router.post('/:id/duplicate',  pageController.duplicate)
+router.get('/:id/export',      pageController.exportPage)
+router.patch('/:id/publish',   pageController.publishPage)
 
 export default router

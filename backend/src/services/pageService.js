@@ -50,6 +50,13 @@ export const duplicate = async (id, userId) => {
 
 export const exportPage = async (id, userId) => {
   const page = await pageModel.findById(id, userId)
-  if (!page) throw Object.assign(new Error('\u9875\u9762\u4E0D\u5B58\u5728\u6216\u65E0\u6743\u9650'), { statusCode: 404 })
+  if (!page) throw Object.assign(new Error('页面不存在或无权限'), { statusCode: 404 })
   return page.config
+}
+
+export const publishPage = async (id, userId) => {
+  const page = await pageModel.findById(id, userId)
+  if (!page) throw Object.assign(new Error('页面不存在或无权限'), { statusCode: 404 })
+  await pageModel.publish(id, userId)
+  return pageModel.findById(id)
 }

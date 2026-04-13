@@ -51,3 +51,11 @@ export const exportPage = async (req, res, next) => {
     res.send(JSON.stringify(config, null, 2))
   } catch (err) { next(err) }
 }
+
+// PATCH /api/pages/:id/publish
+export const publishPage = async (req, res, next) => {
+  try {
+    const data = await pageService.publishPage(Number(req.params.id), req.user.id)
+    success(res, data, '发布成功')
+  } catch (err) { next(err) }
+}
