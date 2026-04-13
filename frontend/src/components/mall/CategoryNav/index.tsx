@@ -1,3 +1,4 @@
+import { ShoppingOutlined } from '@ant-design/icons'
 import type { ISchema } from '@formily/json-schema'
 import styles from './CategoryNav.module.css'
 
@@ -32,7 +33,7 @@ const CategoryNav = ({ categories, columns = 4, showLabel = true }: CategoryNavP
           <div className={styles.iconBox}>
             {cat.icon
               ? <img src={cat.icon} alt={cat.label} className={styles.iconImg} />
-              : <span className={styles.iconEmoji}>🛍️</span>
+              : <ShoppingOutlined className={styles.iconEmoji} />
             }
           </div>
           {showLabel && <span className={styles.label}>{cat.label}</span>}

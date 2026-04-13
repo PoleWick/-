@@ -1,12 +1,48 @@
 import { useMemo } from 'react'
+import {
+  HomeOutlined, ShopOutlined, UnorderedListOutlined,
+  UserOutlined, HeartOutlined, StarOutlined,
+  GiftOutlined, TagOutlined, PhoneOutlined, InfoCircleOutlined,
+} from '@ant-design/icons'
 import type { ISchema } from '@formily/json-schema'
 import styles from './NavBar.module.css'
 
 export interface NavItem {
-  icon:   string   // emoji 或单字符图标
-  label:  string
-  pageId?: number  // 跳转目标页面 ID
+  icon:    string   // 图标名称，如 "HomeOutlined"
+  label:   string
+  pageId?: number
 }
+
+/** 支持的图标名称 → 组件映射 */
+export const ICON_MAP: Record<string, React.ReactNode> = {
+  HomeOutlined:          <HomeOutlined />,
+  ShopOutlined:          <ShopOutlined />,
+  UnorderedListOutlined: <UnorderedListOutlined />,
+  UserOutlined:          <UserOutlined />,
+  HeartOutlined:         <HeartOutlined />,
+  StarOutlined:          <StarOutlined />,
+  GiftOutlined:          <GiftOutlined />,
+  TagOutlined:           <TagOutlined />,
+  PhoneOutlined:         <PhoneOutlined />,
+  InfoCircleOutlined:    <InfoCircleOutlined />,
+}
+
+export const NAV_ICON_OPTIONS = [
+  { label: '首页',  value: 'HomeOutlined' },
+  { label: '商店',  value: 'ShopOutlined' },
+  { label: '订单',  value: 'UnorderedListOutlined' },
+  { label: '我的',  value: 'UserOutlined' },
+  { label: '收藏',  value: 'HeartOutlined' },
+  { label: '推荐',  value: 'StarOutlined' },
+  { label: '活动',  value: 'GiftOutlined' },
+  { label: '分类',  value: 'TagOutlined' },
+  { label: '联系',  value: 'PhoneOutlined' },
+  { label: '关于',  value: 'InfoCircleOutlined' },
+]
+
+const DEFAULT_ICON_NAME = 'HomeOutlined'
+
+export const isImageUrl = (s: string) => /^(https?:|data:image)/.test(s)
 
 interface NavBarProps {
   items?:       NavItem[]
@@ -16,10 +52,10 @@ interface NavBarProps {
 }
 
 const DEFAULT_ITEMS: NavItem[] = [
-  { icon: '\uD83C\uDFE0', label: '\u9996\u9875' },
-  { icon: '\uD83C\uDF7D\uFE0F', label: '\u70B9\u9910' },
-  { icon: '\uD83D\uDCCB', label: '\u8BA2\u5355' },
-  { icon: '\uD83D\uDC64', label: '\u6211\u7684' },
+  { icon: 'HomeOutlined',          label: '首页' },
+  { icon: 'ShopOutlined',          label: '点餐' },
+  { icon: 'UnorderedListOutlined', label: '订单' },
+  { icon: 'UserOutlined',          label: '我的' },
 ]
 
 const NavBar = ({
@@ -51,10 +87,14 @@ const NavBar = ({
           <button
             key={i}
             className={styles.tab}
-            onClick={() => handleClick(item)}
             style={{ color: isActive ? activeColor : undefined }}
+            onClick={() => handleClick(item)}
           >
-            <span className={styles.icon}>{item.icon || '\u25A1'}</span>
+            <span className={styles.icon}>
+              {item.icon && isImageUrl(item.icon)
+                ? <img src={item.icon} alt={item.label} className={styles.iconImg} />
+                : ICON_MAP[item.icon] ?? ICON_MAP[DEFAULT_ICON_NAME]!}
+            </span>
             <span
               className={styles.label}
               style={isActive ? { color: activeColor } : undefined}
@@ -95,10 +135,9 @@ export const navBarSchema: ISchema = {
         properties: {
           icon: {
             type: 'string',
-            title: '\u56FE\u6807(\u8868\u60C5\u7B26)',
+            title: '图标',
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            'x-component-props': { placeholder: '\uD83C\uDFE0  \uD83D\uDECD\uFE0F  \uD83D\uDCCB  \uD83D\uDC64' },
+            'x-component': 'NavIconPicker',
           },
           label: {
             type: 'string',

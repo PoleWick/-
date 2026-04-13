@@ -39,6 +39,13 @@
   line-height: 1;
 }
 
+.iconImg {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
 .label {
   font-size: 11px;
   line-height: 1;

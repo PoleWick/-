@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Carousel } from 'antd'
+import { CloseOutlined } from '@ant-design/icons'
 import type { ISchema } from '@formily/json-schema'
 import styles from './Banner.module.css'
 
@@ -60,7 +61,7 @@ const Banner = ({ images = [], height = 200, autoplay = true, borderRadius = 0 }
             className={styles.lightboxImg}
             onClick={(e) => e.stopPropagation()}
           />
-          <span className={styles.lightboxClose} onClick={() => setLightboxUrl(null)}>✕</span>
+          <CloseOutlined className={styles.lightboxClose} onClick={() => setLightboxUrl(null)} />
         </div>,
         document.body
       )}

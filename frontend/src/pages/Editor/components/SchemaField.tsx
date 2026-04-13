@@ -9,6 +9,7 @@ import {
 } from '@formily/antd-v5'
 import { ImageUploader } from './ImageUploader'
 import PagePicker from './PagePicker'
+import { NavIconPicker } from './NavIconPicker'
 
 export const SchemaField = createSchemaField({
   components: {
@@ -26,5 +27,6 @@ export const SchemaField = createSchemaField({
     'ArrayItems.MoveDown': ArrayItems.MoveDown,
     ImageUploader,
     PagePicker,
+    NavIconPicker,
   },
 })

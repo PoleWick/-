@@ -61,11 +61,6 @@ const ImageUploaderBase = ({ value, onChange, disabled }: Props) => {
           />
         )}
       </div>
-      {value && (
-        <div className={styles.preview}>
-          <img src={value} alt="" className={styles.previewImg} />
-        </div>
-      )}
     </div>
   )
 }

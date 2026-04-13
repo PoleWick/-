@@ -142,6 +142,7 @@
 
 /* 圆形按钮基础样式 */
 .qtyCircle {
+  position: relative;   /* 供伪元素定位 */
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -158,6 +159,17 @@
   transition: border-color 0.15s, color 0.15s;
   user-select: none;
   flex-shrink: 0;
+}
+
+/* 扩大点击热区至 44×44（不影响视觉） */
+.qtyCircle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
 }
 
 .qtyCircle:hover:not(:disabled) {

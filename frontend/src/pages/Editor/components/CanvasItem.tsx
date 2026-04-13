@@ -66,14 +66,18 @@ const CanvasItem = ({ component, index }: Props) => {
     <div
       ref={ref}
       className={styles.wrapper}
-      onClick={(e) => { e.stopPropagation(); selectComponent(component.id) }}
       style={{
         opacity: isDragging ? 0.4 : 1,
-        // box-shadow 代替 outline，极矮组件（Divider）也能完整显示四边选中框
         boxShadow: isSelected ? '0 0 0 2px #ff4d4f' : 'none',
       }}
     >
       <Component {...safeProps} __editorMode={true} />
+
+      {/* 透明遮罩：拦截所有组件内部的点击/交互，由此层统一处理选中逻辑 */}
+      <div
+        className={styles.interactMask}
+        onClick={(e) => { e.stopPropagation(); selectComponent(component.id) }}
+      />
 
       {isSelected && (
         <div className={styles.actionBar}>

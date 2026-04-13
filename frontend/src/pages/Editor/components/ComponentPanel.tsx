@@ -1,5 +1,6 @@
 import { useDrag } from 'react-dnd'
 import { Typography } from 'antd'
+import { AppstoreOutlined } from '@ant-design/icons'
 import { DND_TYPES } from '@/constants/dndTypes'
 import { COMPONENT_LIST } from '@/constants/componentRegistry'
 import type { ComponentType } from '@/types'
@@ -32,7 +33,7 @@ const DraggableItem: FC<DraggableItemProps> = ({ type, label, icon }) => {
     >
       {IconComp
         ? <IconComp className={styles.icon} />
-        : <span className={styles.iconEmoji}>📦</span>
+        : <AppstoreOutlined className={styles.icon} />
       }
       <Text className={styles.label}>{label}</Text>
     </div>

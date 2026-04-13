@@ -1,3 +1,5 @@
+import { Button } from 'antd'
+import { LeftOutlined } from '@ant-design/icons'
 import type { ISchema } from '@formily/json-schema'
 import styles from './TopBar.module.css'
 
@@ -30,9 +32,14 @@ const TopBar = ({
         position: __editorMode ? 'relative' : undefined,
       }}
     >
-      <button className={styles.back} onClick={handleBack} style={{ color: textColor }}>
-        {'‹ \u8FD4\u56DE'}
-      </button>
+      <Button
+        type="text"
+        icon={<LeftOutlined />}
+        onClick={handleBack}
+        style={{ color: textColor, padding: '0 8px 0 0' }}
+      >
+        {'返回'}
+      </Button>
       <span className={styles.title} style={{ color: textColor }}>{title}</span>
     </div>
   )

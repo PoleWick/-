@@ -4,6 +4,13 @@
   transition: box-shadow 0.15s;
 }
 
+/* 透明遮罩：覆盖组件内容，拦截所有指针事件，防止 NavBar/CartEntry 等跳转 */
+.interactMask {
+  position: absolute;
+  inset: 0;
+  z-index: 100;  /* 高于组件内容，低于 actionBar/typeLabel 的 200 */
+}
+
 .actionBar {
   position: absolute;
   top: 0;

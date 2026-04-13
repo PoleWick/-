@@ -13,24 +13,6 @@
   user-select: none;
 }
 
-.back {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px 8px 8px 0;
-  font-size: 15px;
-  color: inherit;
-  flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.back:active {
-  opacity: 0.6;
-}
-
 .title {
   flex: 1;
   text-align: center;
